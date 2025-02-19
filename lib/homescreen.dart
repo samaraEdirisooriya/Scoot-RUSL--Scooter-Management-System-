@@ -1,5 +1,42 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-class WelcomeScreen extends StatelessWidget {
+class home extends StatefulWidget {
+  const home({super.key});
+
+  @override
+  State<home> createState() => _homeState();
+}
+
+class _homeState extends State<home> {
+  final DatabaseReference _database = FirebaseDatabase.instance.ref();
+  Map<String, dynamic>? scooterData;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchScooter();
+  }
+
+ void fetchScooter() {
+  _database.onValue.listen((event) {
+    final data = event.snapshot.value as Map<dynamic, dynamic>?;
+    if (data != null) {
+      print("Data from Firebase: $data");
+      if (data["availability"] == true) {
+        setState(() {
+          scooterData = {
+            "name": data["name"],
+            "lat": data["lat"],
+            "lang": data["lang"],
+            "owneruid": data["owneruid"],
+            "parkingopen": data["parkingopen"],
+          };
+        });
+      }
+    }
+  });
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,21 +143,7 @@ class WelcomeScreen extends StatelessWidget {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  ScooterCard(),
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ScooterCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
+                 scooterData!=null? Container(
       width: 180,
       margin: EdgeInsets.only(right: 10),
       padding: EdgeInsets.all(10),
@@ -132,7 +155,7 @@ class ScooterCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.network(
-            'https://via.placeholder.com/150',
+            'https://launchberg.com/content/images/size/w2000/2019/08/5_Free_Image_Resizer_Apps.jpg',
             height: 100,
             fit: BoxFit.cover,
           ),
@@ -152,7 +175,7 @@ class ScooterCard extends StatelessWidget {
           ),
           SizedBox(height: 10),
           Text(
-            'Scooter 001',
+             scooterData!["name"],
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -165,6 +188,17 @@ class ScooterCard extends StatelessWidget {
           ),
         ],
       ),
+    ):Container(
+      child: Text("No data "),
+    ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
+
+

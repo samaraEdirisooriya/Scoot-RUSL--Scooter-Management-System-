@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "899752886466",
+    "project_id": "scoot-rusl",
+    "storage_bucket": "scoot-rusl.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:899752886466:android:778f0955bb6975ed887b5b",
+        "android_client_info": {
+          "package_name": "com.example.scootrusl"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoK96-u2URo8Z8ha8YCgEkD5pxhIU0Zrk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

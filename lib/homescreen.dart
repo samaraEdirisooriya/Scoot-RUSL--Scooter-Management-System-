@@ -1,5 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:scootrusl/bookscreen.dart';
+import 'package:scootrusl/brousemap.dart';
+
 class home extends StatefulWidget {
   const home({super.key});
 
@@ -17,25 +20,25 @@ class _homeState extends State<home> {
     fetchScooter();
   }
 
- void fetchScooter() {
-  _database.onValue.listen((event) {
-    final data = event.snapshot.value as Map<dynamic, dynamic>?;
-    if (data != null) {
-      print("Data from Firebase: $data");
-      if (data["availability"] == true) {
-        setState(() {
-          scooterData = {
-            "name": data["name"],
-            "lat": data["lat"],
-            "lang": data["lang"],
-            "owneruid": data["owneruid"],
-            "parkingopen": data["parkingopen"],
-          };
-        });
+  void fetchScooter() {
+    _database.onValue.listen((event) {
+      final data = event.snapshot.value as Map<dynamic, dynamic>?;
+      if (data != null) {
+        print("Data from Firebase: $data");
+        if (data["availability"] == true) {
+          setState(() {
+            scooterData = {
+              "name": data["name"],
+              "lat": data["lat"],
+              "lang": data["lang"],
+              "owneruid": data["owneruid"],
+              "parkingopen": data["parkingopen"],
+            };
+          });
+        }
       }
-    }
-  });
-}
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +109,8 @@ class _homeState extends State<home> {
                           ),
                           Text(
                             'Rajarata',
-                            style: TextStyle(fontSize: 16, color: Colors.black54),
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black54),
                           ),
                         ],
                       )
@@ -132,9 +136,18 @@ class _homeState extends State<home> {
                     color: Colors.black,
                   ),
                 ),
-                Text(
-                  'Browse Map >',
-                  style: TextStyle(fontSize: 16, color: Colors.black54),
+                GestureDetector(
+                  onTap: () {
+                     Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MapScreen()),
+                            );
+                  },
+                  child: Text(
+                    'Browse Map >',
+                    style: TextStyle(fontSize: 16, color: Colors.black54),
+                  ),
                 ),
               ],
             ),
@@ -143,54 +156,69 @@ class _homeState extends State<home> {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                 scooterData!=null? Container(
-      width: 180,
-      margin: EdgeInsets.only(right: 10),
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.network(
-            'https://launchberg.com/content/images/size/w2000/2019/08/5_Free_Image_Resizer_Apps.jpg',
-            height: 100,
-            fit: BoxFit.cover,
-          ),
-          SizedBox(height: 10),
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.greenAccent, Colors.blue],
-              ),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              'Distance 150m',
-              style: TextStyle(fontSize: 14, color: Colors.white),
-            ),
-          ),
-          SizedBox(height: 10),
-          Text(
-             scooterData!["name"],
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-          Text(
-            'Available',
-            style: TextStyle(fontSize: 16, color: Colors.green),
-          ),
-        ],
-      ),
-    ):Container(
-      child: Text("No data "),
-    ),
+                  scooterData != null
+                      ? GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => booknow()),
+                            );
+                          },
+                          child: Container(
+                            width: 180,
+                            margin: EdgeInsets.only(right: 10),
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'images/project covwer.png',
+                                  height: 150,
+                                  fit: BoxFit.cover,
+                                ),
+                                SizedBox(height: 10),
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 5, horizontal: 10),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [Colors.greenAccent, Colors.blue],
+                                    ),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    'Distance 150m',
+                                    style: TextStyle(
+                                        fontSize: 14, color: Colors.white),
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                Text(
+                                  scooterData!["name"],
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                Text(
+                                  'Available',
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.green),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : Container(
+                          child: Text("No data "),
+                        ),
                 ],
               ),
             )
@@ -200,5 +228,3 @@ class _homeState extends State<home> {
     );
   }
 }
-
-

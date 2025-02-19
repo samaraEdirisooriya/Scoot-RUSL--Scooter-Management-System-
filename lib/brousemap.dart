@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:free_map/free_map.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -10,48 +10,44 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  late GoogleMapController _mapController;
-  Set<Marker> _markers = {}; // Use Set to store unique markers
+  late final MapController _mapController;
+  Set<Marker> _markers = {};
   final DatabaseReference _database = FirebaseDatabase.instance.ref();
+  Map<String, dynamic>? scooterData;
 
   @override
   void initState() {
     super.initState();
-    _fetchScooterLocation();
+    _mapController = MapController();
+    fetchScooter();
   }
 
   @override
   void dispose() {
     _mapController.dispose();
     super.dispose();
+
   }
 
-  void _fetchScooterLocation() {
-    // Listen for changes in the scooter location data from Firebase
-    _database.child("scooter").onValue.listen((event) {
-      final data = event.snapshot.value as Map<dynamic, dynamic>?;
-      
-      // Check if data contains lat and lang
-      if (data != null && data["lat"] != null && data["lang"] != null) {
-        final scooterLat = data["lat"];
-        final scooterLng = data["lang"];
-
-        // Update markers whenever the scooter location changes
+ void fetchScooter() {
+  _database.onValue.listen((event) {
+    final data = event.snapshot.value as Map<dynamic, dynamic>?;
+    if (data != null) {
+      print("Data from Firebase: $data");
+      if (data["availability"] == true) {
         setState(() {
-          _markers.clear(); // Clear existing markers before adding new ones
-          _markers.add(Marker(
-            markerId: MarkerId("scooter"),
-            position: LatLng(scooterLat, scooterLng),
-            infoWindow: InfoWindow(
-              title: "Scooter",
-              snippet: "Location of the scooter",
-            ),
-            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-          ));
+          scooterData = {
+            "name": data["name"],
+            "lat": data["lat"],
+            "lang": data["lang"],
+            "owneruid": data["owneruid"],
+            "parkingopen": data["parkingopen"],
+          };
         });
       }
-    });
-  }
+    }
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -64,17 +60,36 @@ class _MapScreenState extends State<MapScreen> {
         ),
       ),
       body: SafeArea(
-        child: GoogleMap(
-          initialCameraPosition: CameraPosition(
-            target: LatLng(8.361005073025808, 80.50334762480115), // Default location
-            zoom: 15.0,
-          ),
-          markers: _markers, // Display markers on the map
-          onMapCreated: (GoogleMapController controller) {
-            _mapController = controller;
-          },
+        child: Stack(
+          children: [
+            _map, // Display map
+          ],
         ),
       ),
+    );
+  }
+
+  // Full-screen map widget
+  Widget get _map {
+    return FmMap(
+      mapController: _mapController,
+      mapOptions: MapOptions(
+        minZoom: 15,
+        maxZoom: 18,
+        initialZoom: 15,
+        initialCenter: LatLng(8.361005073025808, 80.50334762480115), // Default initial location
+      ),
+      markers:[
+       
+        Marker(
+          point: LatLng(scooterData!['lat'], scooterData!['lang']),
+          child: const Icon(
+            size: 40.0,
+            color: Colors.red,
+            Icons.location_on_rounded,
+          ),
+        ),
+      ], // Pass the markers as a list
     );
   }
 }

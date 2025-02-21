@@ -67,17 +67,10 @@ class _MapScreenState extends State<MapScreen> {
 
           // 🏍️ Update Markers: Keep Parking + Scooter
           _markers = {
+           
             Marker(
-              width: 100,
               height: 100,
-              point: _parkingLocation,
-              child: const Icon(
-                Icons.location_on,
-                size: 40.0,
-                color: Colors.blue,
-              ),
-            ),
-            Marker(
+              width: 100,
               point: scooterLocation,
               child: Image.asset("images/New Project (10).png"),
             ),

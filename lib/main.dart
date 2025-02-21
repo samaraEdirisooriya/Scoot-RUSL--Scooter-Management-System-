@@ -4,6 +4,7 @@ import 'package:scootrusl/brousemap.dart';
 import 'package:scootrusl/homescreen.dart';
 import 'package:scootrusl/singup.dart';
 import 'package:scootrusl/supportpage.dart';
+import 'package:scootrusl/test.dart';
 
 
 void main() async {

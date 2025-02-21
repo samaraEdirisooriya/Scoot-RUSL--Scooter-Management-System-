@@ -162,7 +162,7 @@ class _homeState extends State<home> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => booknow()),
+                                  builder: (context) => MapScreen2()),
                             );
                           },
                           child: Container(

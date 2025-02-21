@@ -15,11 +15,15 @@ class _MapScreenState extends State<MapScreen> {
   final DatabaseReference _database = FirebaseDatabase.instance.ref();
   Map<String, dynamic>? scooterData;
 
+  // 🅿️ Fixed Parking Location
+  static const LatLng _parkingLocation = LatLng(8.361005073025808, 80.50334762480115);
+
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
-    fetchScooter();
+    _initializeMarkers(); // Load fixed markers
+    fetchScooter(); // Fetch real-time scooter data
   }
 
   @override
@@ -28,26 +32,62 @@ class _MapScreenState extends State<MapScreen> {
     super.dispose();
   }
 
+  void _initializeMarkers() {
+    setState(() {
+      _markers.add(
+        Marker(
+          point: _parkingLocation,
+          child: const Icon(
+            Icons.local_parking,
+            size: 40.0,
+            color: Colors.blue,
+          ),
+        ),
+      );
+    });
+  }
+
   void fetchScooter() {
     _database.onValue.listen((event) {
       final data = event.snapshot.value as Map<dynamic, dynamic>?;
-      if (data != null) {
+
+      if (data != null && data["availability"] == true) {
         print("Data from Firebase: $data");
-        if (data["availability"] == true) {
-          setState(() {
-            scooterData = {
-              "name": data["name"],
-              "lat": data["lat"],
-              "lang": data["lang"],
-              "owneruid": data["owneruid"],
-              "parkingopen": data["parkingopen"],
-            };
-             _mapController.move(
-            LatLng(scooterData!['lat'], scooterData!['lang']),
-            18, // Zoom level (adjust as needed)
-          );
-          });
-        }
+
+        setState(() {
+          scooterData = {
+            "name": data["name"],
+            "lat": data["lat"],
+            "lang": data["lang"],
+            "owneruid": data["owneruid"],
+            "parkingopen": data["parkingopen"],
+          };
+
+          LatLng scooterLocation = LatLng(scooterData!['lat'], scooterData!['lang']);
+
+          // 🏍️ Update Markers: Keep Parking + Scooter
+          _markers = {
+            Marker(
+              width: 100,
+              height: 100,
+              point: _parkingLocation,
+              child: const Icon(
+                Icons.location_on,
+                size: 40.0,
+                color: Colors.blue,
+              ),
+            ),
+            Marker(
+              point: scooterLocation,
+              child: Image.asset("images/New Project (10).png"),
+            ),
+          };
+
+          print("Updated Markers: $_markers"); // Debugging
+
+          // Move camera to focus on the scooter location
+          _mapController.move(scooterLocation, 18);
+        });
       }
     });
   }
@@ -59,13 +99,13 @@ class _MapScreenState extends State<MapScreen> {
         title: const Text('Real-Time Scooter Location'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context), // Back to previous screen
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SafeArea(
         child: Stack(
           children: [
-            _map, // Display map
+            _map, // Display map with markers
           ],
         ),
       ),
@@ -80,18 +120,9 @@ class _MapScreenState extends State<MapScreen> {
         minZoom: 15,
         maxZoom: 18,
         initialZoom: 19,
-        initialCenter: LatLng(8.361005073025808, 80.50334762480115), // Default initial location
+        initialCenter: _parkingLocation, // Default map center
       ),
-      markers: scooterData != null
-          ? [
-              Marker(
-                width: 100,
-                height: 100,
-                point: LatLng(scooterData!['lat'], scooterData!['lang']),
-                child: Image.asset("images/New Project (10).png",)
-              ),
-            ]
-          : [], // If scooterData is null, no markers are added
+      markers: _markers.toList(), // Convert Set to List for the map
     );
   }
 }

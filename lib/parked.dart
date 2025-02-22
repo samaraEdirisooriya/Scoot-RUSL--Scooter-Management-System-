@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
-import 'package:scootrusl/mainmap.dart';
+import 'package:scootrusl/homescreen.dart';
 
-class NotePage extends StatefulWidget {
-  const NotePage({super.key});
+class NotePage1 extends StatefulWidget {
+  const NotePage1({super.key});
 
   @override
-  State<NotePage> createState() => _NotePageState();
+  State<NotePage1> createState() => _NotePage1State();
 }
 
-class _NotePageState extends State<NotePage> {
+class _NotePage1State extends State<NotePage1> {
   final ConfettiController _confettiController = ConfettiController();
 
   @override
@@ -50,7 +50,7 @@ class _NotePageState extends State<NotePage> {
                     fit: BoxFit.cover,
                   ),
                   Text(
-                    "Successfully Booked Scooter!",
+                    "Parking Successful!",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -60,7 +60,7 @@ class _NotePageState extends State<NotePage> {
                   ),
                   SizedBox(height: 20),
                   Text(
-                    "Enjoy Raide",
+                    "Come back",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -87,7 +87,7 @@ class _NotePageState extends State<NotePage> {
                     onTap: () {
                         Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => MapScreen3()),
+              MaterialPageRoute(builder: (context) => home()),
             );
                     },
                     child: Container(
@@ -97,7 +97,7 @@ class _NotePageState extends State<NotePage> {
                         color: Color.fromARGB(240, 197, 243, 185),
                         borderRadius: BorderRadius.all(Radius.circular(20)),
                       ),
-                      child: const Center(child: Text('Continue')),
+                      child: const Center(child: Text('Home')),
                     ),
                   ),
                 ],

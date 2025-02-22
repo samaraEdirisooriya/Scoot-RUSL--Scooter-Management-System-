@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:scootrusl/parked.dart';
 
 class QRScannerScreen1 extends StatefulWidget {
   const QRScannerScreen1({super.key});
@@ -55,7 +56,7 @@ class _QRScannerScreen1State extends State<QRScannerScreen1>
             _database.child("availability").set(true);
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => SuccessPage()),
+              MaterialPageRoute(builder: (context) => NotePage1()),
             );
           } else {
             Navigator.pushReplacement(

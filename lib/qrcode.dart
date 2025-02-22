@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:scootrusl/confitaniamation.dart';
 
 class QRScannerScreen extends StatefulWidget {
   const QRScannerScreen({super.key});
@@ -55,7 +56,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
             _database.child("availability").set(false);
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => SuccessPage()),
+              MaterialPageRoute(builder: (context) => NotePage()),
             );
           } else {
             Navigator.pushReplacement(
@@ -135,6 +136,9 @@ class FailurePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        
+      ),
       body: Center(
         child: Text("❌ Scan Failed!",
             style: TextStyle(fontSize: 24, color: Colors.red)),

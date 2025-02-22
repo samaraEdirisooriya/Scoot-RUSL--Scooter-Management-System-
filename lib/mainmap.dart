@@ -113,100 +113,101 @@ class _MapScreen6State extends State<MapScreen6> {
   }
 
   // Fetch scooter location from Firebase
-  void fetchScooter() {
-    _database.onValue.listen((event) {
-      final data = event.snapshot.value as Map<dynamic, dynamic>?;
+  // Fetch scooter location from Firebase
+void fetchScooter() {
+  _database.onValue.listen((event) {
+    final data = event.snapshot.value as Map<dynamic, dynamic>?;
 
-      if (data != null && data["availability"] == true) {
-        print("Data from Firebase: $data");
+    if (data != null) { // Remove the condition for availability
+      print("Data from Firebase: $data");
 
-        setState(() {
-          scooterData = {
-            "name": data["name"],
-            "lat": data["lat"],
-            "lang": data["lang"],
-            "owneruid": data["owneruid"],
-            "parkingopen": data["parkingopen"],
-          };
+      setState(() {
+        scooterData = {
+          "name": data["name"],
+          "lat": data["lat"],
+          "lang": data["lang"],
+          "owneruid": data["owneruid"],
+          "parkingopen": data["parkingopen"],
+        };
 
-          // Convert latitude and longitude strings to double
-          double? lat = double.tryParse(scooterData!["lat"].toString());
-          double? lang = double.tryParse(scooterData!["lang"].toString());
+        // Convert latitude and longitude strings to double
+        double? lat = double.tryParse(scooterData!["lat"].toString());
+        double? lang = double.tryParse(scooterData!["lang"].toString());
 
-          if (lat != null && lang != null) {
-            LatLng scooterLocation = LatLng(lat, lang);
+        if (lat != null && lang != null) {
+          LatLng scooterLocation = LatLng(lat, lang);
 
-            // Update markers
-            _markers = {
-              // Parking Location Marker
-              Marker(
+          // Update markers
+          _markers = {
+            // Parking Location Marker
+            Marker(
+              width: 600,
+              height: 600,
+              point: _parkingLocation,
+              child: Container(
                 width: 600,
                 height: 600,
-                point: _parkingLocation,
-                child: Container(
-                  width: 600,
-                  height: 600,
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(47, 244, 67, 54),
-                    borderRadius: BorderRadius.circular(600),
-                    border: Border.all(color: Colors.black, width: 3),
-                  ),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(47, 244, 67, 54),
+                  borderRadius: BorderRadius.circular(600),
+                  border: Border.all(color: Colors.black, width: 3),
                 ),
               ),
+            ),
 
-              // Blue Dot for Device Location (if available)
-              if (_deviceLocation != null)
-                Marker(
-                  width: 40,
-                  height: 40,
-                  point: _deviceLocation!,
-                  child: Container(
-                    width: 60,
-                    height: 60,
-                    child: Center(
-                      child: Container(
-                        height: 25,
-                        width: 25,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: const Color.fromARGB(255, 33, 149, 243),
-                        ),
+            // Blue Dot for Device Location (if available)
+            if (_deviceLocation != null)
+              Marker(
+                width: 40,
+                height: 40,
+                point: _deviceLocation!,
+                child: Container(
+                  width: 60,
+                  height: 60,
+                  child: Center(
+                    child: Container(
+                      height: 25,
+                      width: 25,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color.fromARGB(255, 33, 149, 243),
                       ),
                     ),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color.fromARGB(106, 33, 142, 243),
-                    ),
+                  ),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color.fromARGB(106, 33, 142, 243),
                   ),
                 ),
-
-              // Scooter Location Marker
-              Marker(
-                width: 90,
-                height: 90,
-                point: scooterLocation,
-                child: Image.asset("images/New Project (10).png"),
               ),
-            };
 
-            // Update polyline points with device location and scooter location
-            if (_deviceLocation != null) {
-              _polylinePoints = [_deviceLocation!, scooterLocation];
-            } else {
-              _polylinePoints = [_fixedLocation, scooterLocation];
-            }
+            // Scooter Location Marker
+            Marker(
+              width: 90,
+              height: 90,
+              point: scooterLocation,
+              child: Image.asset("images/New Project (10).png"),
+            ),
+          };
 
-            print("Updated Markers: $_markers"); // Debugging
-
-            // Adjust the map to focus on the scooter location
-            _mapController.move(scooterLocation, 18);
+          // Update polyline points with device location and scooter location
+          if (_deviceLocation != null) {
+            _polylinePoints = [_deviceLocation!, scooterLocation];
           } else {
-            print("Invalid latitude or longitude");
+            _polylinePoints = [_fixedLocation, scooterLocation];
           }
-        });
-      }
-    });
-  }
+
+          print("Updated Markers: $_markers"); // Debugging
+
+          // Adjust the map to focus on the scooter location
+          _mapController.move(scooterLocation, 18);
+        } else {
+          print("Invalid latitude or longitude");
+        }
+      });
+    }
+  });
+}
 
   // Get the device's current location
   Future<void> _getDeviceLocation() async {

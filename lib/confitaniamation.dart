@@ -88,7 +88,7 @@ class _NotePageState extends State<NotePage> {
                     onTap: () {
                         Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => MapScreen2()),
+              MaterialPageRoute(builder: (context) => MapScreen6()),
             );
                     },
                     child: Container(

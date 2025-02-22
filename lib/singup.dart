@@ -61,8 +61,8 @@ class _AuthScreenState extends State<AuthScreen> {
           'uid': userCredential.user?.uid,
           'email': _emailController.text.trim(),
           'phone': _phoneController.text.trim(),
-          'reg_number': _regNumberController.text.trim(),
-          'university': _universityController.text.trim(),
+          'name': _regNumberController.text.trim(),
+          'reg_number': _universityController.text.trim(),
           'createdAt': FieldValue.serverTimestamp(), // Store user creation timestamp
         });
 
@@ -79,7 +79,7 @@ class _AuthScreenState extends State<AuthScreen> {
       // Navigate to the home screen after authentication success
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => home()),
+        MaterialPageRoute(builder: (_) => Home()),
       );
     } on FirebaseAuthException catch (e) {
       String errorMessage = 'An error occurred, please try again.';
@@ -186,7 +186,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         TextField(
                           controller: _regNumberController,
                           decoration: InputDecoration(
-                            labelText: 'Reg Number',
+                            labelText: 'Name',
                             border: UnderlineInputBorder(),
                           ),
                         ),
@@ -194,7 +194,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         TextField(
                           controller: _universityController,
                           decoration: InputDecoration(
-                            labelText: 'University',
+                            labelText: 'Reg Number',
                             border: UnderlineInputBorder(),
                           ),
                         ),

@@ -1,25 +1,61 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:scootrusl/bookscreen.dart';
 import 'package:scootrusl/brousemap.dart';
 
-class home extends StatefulWidget {
-  const home({super.key});
+class Home extends StatefulWidget {
+  const Home({super.key});
 
   @override
-  State<home> createState() => _homeState();
+  State<Home> createState() => _HomeState();
 }
 
-class _homeState extends State<home> {
+class _HomeState extends State<Home> {
   final DatabaseReference _database = FirebaseDatabase.instance.ref();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  
   Map<String, dynamic>? scooterData;
+  String? userName;
+  String? userUid;
 
   @override
   void initState() {
     super.initState();
-    fetchScooter();
+    getCurrentUser();
   }
 
+  // Get current authenticated user
+  void getCurrentUser() {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      userUid = user.uid; // Get UID of logged-in user
+      fetchUserName(userUid);
+      fetchScooter();
+    } else {
+      print("No user is signed in.");
+    }
+  }
+
+  // Fetch user name from Firestore based on UID
+  void fetchUserName(String? uid) async {
+    if (uid != null) {
+      try {
+        DocumentSnapshot userSnapshot =
+            await FirebaseFirestore.instance.collection('users').doc(uid).get();
+        if (userSnapshot.exists) {
+          setState(() {
+            userName = userSnapshot['name']; // Assuming 'name' is the field in Firestore
+          });
+        }
+      } catch (e) {
+        print("Error fetching user data: $e");
+      }
+    }
+  }
+
+  // Fetch scooter data from Firebase Realtime Database
   void fetchScooter() {
     _database.onValue.listen((event) {
       final data = event.snapshot.value as Map<dynamic, dynamic>?;
@@ -68,7 +104,7 @@ class _homeState extends State<home> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Hello Madhuvantha,',
+                      userName != null ? 'Hello $userName,' : 'Hello User,',
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -109,8 +145,7 @@ class _homeState extends State<home> {
                           ),
                           Text(
                             'Rajarata',
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.black54),
+                            style: TextStyle(fontSize: 16, color: Colors.black54),
                           ),
                         ],
                       )
@@ -217,7 +252,7 @@ class _homeState extends State<home> {
                           ),
                         )
                       : Container(
-                          child: Text("No data "),
+                          child: Text("No data"),
                         ),
                 ],
               ),

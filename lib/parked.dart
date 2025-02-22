@@ -87,7 +87,7 @@ class _NotePage1State extends State<NotePage1> {
                     onTap: () {
                         Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => home()),
+              MaterialPageRoute(builder: (context) => Home()),
             );
                     },
                     child: Container(

@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:scootrusl/bookscreen.dart';
 import 'package:scootrusl/brousemap.dart';
+import 'package:scootrusl/singup.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -75,7 +76,13 @@ class _HomeState extends State<Home> {
       }
     });
   }
-
+  void _logout(BuildContext context) async {
+    await _auth.signOut(); // Sign out from Firebase
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => AuthScreen()), // Redirect to Splash
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,8 +123,13 @@ class _HomeState extends State<Home> {
                       style: TextStyle(fontSize: 16, color: Colors.black54),
                     ),
                   ],
-                )
+                ),
+                 IconButton(
+            icon: Icon(Icons.exit_to_app, color: Colors.white), 
+            onPressed: () => _logout(context),
+          ),
               ],
+              
             ),
             SizedBox(height: 20),
             Container(

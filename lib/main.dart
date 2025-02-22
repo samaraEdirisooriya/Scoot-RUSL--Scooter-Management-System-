@@ -9,6 +9,7 @@ import 'package:scootrusl/navigateto.dart';
 import 'package:scootrusl/parked.dart';
 import 'package:scootrusl/qrcode.dart';
 import 'package:scootrusl/singup.dart';
+import 'package:scootrusl/splshscreen.dart';
 import 'package:scootrusl/supportpage.dart';
 import 'package:scootrusl/test.dart';
 
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Home(),
+      home: SplashScreen(),
     );
   }
 }

@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-class QRScannerScreen extends StatefulWidget {
-  const QRScannerScreen({super.key});
+class QRScannerScreen1 extends StatefulWidget {
+  const QRScannerScreen1({super.key});
 
   @override
-  State<QRScannerScreen> createState() => _QRScannerScreenState();
+  State<QRScannerScreen1> createState() => _QRScannerScreen1State();
 }
 
-class _QRScannerScreenState extends State<QRScannerScreen>
+class _QRScannerScreen1State extends State<QRScannerScreen1>
     with WidgetsBindingObserver {
   final MobileScannerController _controller = MobileScannerController();
   final DatabaseReference _database =
@@ -29,7 +29,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
 
   void fetchExpectedQR() {
     try {
-      _database.child("qr").onValue.listen((event) {
+      _database.child("qr2").onValue.listen((event) {
         final data = event.snapshot.value;
         if (data != null) {
           setState(() {
@@ -52,7 +52,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
           print(scannedQR);
           // Compare scanned QR with Firebase QR
           if (firebaseQR != null && scannedQR == firebaseQR) {
-            _database.child("availability").set(false);
+            _database.child("availability").set(true);
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => SuccessPage()),

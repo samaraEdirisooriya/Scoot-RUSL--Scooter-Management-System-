@@ -59,7 +59,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
               MaterialPageRoute(builder: (context) => NotePage()),
             );
           } else {
-            Navigator.pushReplacement(
+            Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => FailurePage()),
             );
@@ -136,12 +136,22 @@ class FailurePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        
-      ),
-      body: Center(
-        child: Text("❌ Scan Failed!",
-            style: TextStyle(fontSize: 24, color: Colors.red)),
+      
+      body: Column(
+        children: [
+          Positioned(
+          child: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.arrow_back),
+          ),
+        ),
+          Center(
+            child: Text("❌ Scan Failed!",
+                style: TextStyle(fontSize: 24, color: Colors.red)),
+          ),
+        ],
       ),
     );
   }

@@ -136,9 +136,22 @@ class FailurePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text("❌ Scan Failed!",
-            style: TextStyle(fontSize: 24, color: Colors.red)),
+      
+      body: Column(
+        children: [
+          Positioned(
+          child: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.arrow_back),
+          ),
+        ),
+          Center(
+            child: Text("❌ Scan Failed!",
+                style: TextStyle(fontSize: 24, color: Colors.red)),
+          ),
+        ],
       ),
     );
   }

@@ -1,18 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:scootrusl/parkingqrcoode.dart';
 import 'package:scootrusl/qrcode.dart';
 
-class MapScreen3 extends StatefulWidget {
-  const MapScreen3({super.key});
+class MapScreen6 extends StatefulWidget {
+  const MapScreen6({super.key});
 
   @override
-  State<MapScreen3> createState() => _MapScreen3State();
+  State<MapScreen6> createState() => _MapScreen6State();
 }
 
-class _MapScreen3State extends State<MapScreen3> {
+class _MapScreen6State extends State<MapScreen6> {
   late final MapController _mapController;
   final DatabaseReference _database = FirebaseDatabase.instance.ref();
   Set<Marker> _markers = {}; // Holds all markers
@@ -25,24 +28,34 @@ class _MapScreen3State extends State<MapScreen3> {
   static const LatLng _fixedLocation =
       LatLng(8.361500, 80.503000); // Another fixed location
 
+  // Device location
+  LatLng? _deviceLocation;
+
+  // Stream subscription for real-time location updates
+  StreamSubscription<Position>? _positionStreamSubscription;
+
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
     _initializeMarkers(); // Load initial markers
     fetchScooter(); // Fetch real-time scooter data
+    _getDeviceLocation(); // Get device location
+    _startLocationUpdates(); // Start real-time location updates
   }
 
   @override
   void dispose() {
     _mapController.dispose();
+    _positionStreamSubscription?.cancel(); // Cancel the stream subscription
     super.dispose();
   }
 
   // Add initial markers
   void _initializeMarkers() {
     setState(() {
-      _markers.add(
+      _markers = {
+        // Parking Location Marker
         Marker(
           width: 600,
           height: 600,
@@ -57,9 +70,34 @@ class _MapScreen3State extends State<MapScreen3> {
             ),
           ),
         ),
-      );
 
-      _markers.add(
+        // Blue Dot for Device Location (if available)
+        if (_deviceLocation != null)
+          Marker(
+            width: 40,
+            height: 40,
+            point: _deviceLocation!,
+            child: Container(
+              width: 60,
+              height: 60,
+              child: Center(
+                child: Container(
+                  height: 25,
+                  width: 25,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color.fromARGB(255, 33, 149, 243),
+                  ),
+                ),
+              ),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color.fromARGB(106, 33, 142, 243),
+              ),
+            ),
+          ),
+
+        // Fixed Location Marker
         Marker(
           width: 100,
           height: 100,
@@ -70,7 +108,7 @@ class _MapScreen3State extends State<MapScreen3> {
             color: Colors.green,
           ),
         ),
-      );
+      };
     });
   }
 
@@ -100,6 +138,7 @@ class _MapScreen3State extends State<MapScreen3> {
 
             // Update markers
             _markers = {
+              // Parking Location Marker
               Marker(
                 width: 600,
                 height: 600,
@@ -114,16 +153,34 @@ class _MapScreen3State extends State<MapScreen3> {
                   ),
                 ),
               ),
-              Marker(
-                width: 100,
-                height: 100,
-                point: _fixedLocation,
-                child: const Icon(
-                  Icons.location_pin,
-                  size: 40.0,
-                  color: Colors.green,
+
+              // Blue Dot for Device Location (if available)
+              if (_deviceLocation != null)
+                Marker(
+                  width: 40,
+                  height: 40,
+                  point: _deviceLocation!,
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    child: Center(
+                      child: Container(
+                        height: 25,
+                        width: 25,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: const Color.fromARGB(255, 33, 149, 243),
+                        ),
+                      ),
+                    ),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: const Color.fromARGB(106, 33, 142, 243),
+                    ),
+                  ),
                 ),
-              ),
+
+              // Scooter Location Marker
               Marker(
                 width: 90,
                 height: 90,
@@ -132,8 +189,12 @@ class _MapScreen3State extends State<MapScreen3> {
               ),
             };
 
-            // Update polyline points
-            _polylinePoints = [_fixedLocation, scooterLocation];
+            // Update polyline points with device location and scooter location
+            if (_deviceLocation != null) {
+              _polylinePoints = [_deviceLocation!, scooterLocation];
+            } else {
+              _polylinePoints = [_fixedLocation, scooterLocation];
+            }
 
             print("Updated Markers: $_markers"); // Debugging
 
@@ -144,6 +205,70 @@ class _MapScreen3State extends State<MapScreen3> {
           }
         });
       }
+    });
+  }
+
+  // Get the device's current location
+  Future<void> _getDeviceLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Check if location services are enabled
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      print("Location services are disabled.");
+      return;
+    }
+
+    // Check for location permissions
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission != LocationPermission.whileInUse &&
+          permission != LocationPermission.always) {
+        print("Location permission denied");
+        return;
+      }
+    }
+
+    // Get current location
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    // Update the device location
+    setState(() {
+      _deviceLocation = LatLng(position.latitude, position.longitude);
+    });
+
+    // Update markers and polyline with the device location
+    _initializeMarkers();
+    fetchScooter();
+
+    // Center the map to the device location
+    if (_deviceLocation != null) {
+      _mapController.move(_deviceLocation!, 18);
+    }
+  }
+
+  // Start real-time location updates
+  void _startLocationUpdates() {
+    const LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 10, // Update location every 10 meters
+    );
+
+    _positionStreamSubscription = Geolocator.getPositionStream(
+      locationSettings: locationSettings,
+    ).listen((Position position) {
+      // Update the device location
+      setState(() {
+        _deviceLocation = LatLng(position.latitude, position.longitude);
+      });
+
+      // Update markers and polyline with the new device location
+      _initializeMarkers();
+      fetchScooter();
     });
   }
 
@@ -210,16 +335,16 @@ class _MapScreen3State extends State<MapScreen3> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => QRScannerScreen1()));
+                              builder: (context) =>QRScannerScreen1()));
                     },
                     child: Container(
                       width: 100,
                       height: 50,
                       decoration: const BoxDecoration(
-                        color: Color.fromARGB(240, 197, 243, 185),
+                        color: Color.fromARGB(239, 250, 205, 4),
                         borderRadius: BorderRadius.all(Radius.circular(20)),
                       ),
-                      child: const Center(child: Text('Park Now')),
+                      child: const Center(child: Text('Return Now')),
                     ),
                   ),
                 ),
@@ -235,7 +360,7 @@ class _MapScreen3State extends State<MapScreen3> {
             fit: BoxFit.cover,
           ),
         ),
-        
+       
       ],
     );
   }

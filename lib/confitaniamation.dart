@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
+import 'package:scootrusl/bookscreen.dart';
 import 'package:scootrusl/mainmap.dart';
 
 class NotePage extends StatefulWidget {
@@ -87,7 +88,7 @@ class _NotePageState extends State<NotePage> {
                     onTap: () {
                         Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => MapScreen3()),
+              MaterialPageRoute(builder: (context) => MapScreen2()),
             );
                     },
                     child: Container(

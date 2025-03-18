@@ -6,8 +6,8 @@ ScootRUSL is a smart scooter management system designed for students of Rajarata
 With ScootRUSL, students can hire and reserve kick scooters easily using a mobile application, reducing travel time and improving overall convenience. 🚀
 
 ## Screenshots & Images
-![ScootRUSL App UI](demo1.png)
-![Real-time Tracking Feature](path/to/screenshot2.png)
+![ScootRUSL App UI](demo1.jpg)
+![Real-time Tracking Feature](path/to/screenshot2.jpg)
 ![Scooter QR Code Unlock](path/to/screenshot3.png)
 
 ## Problem Statement

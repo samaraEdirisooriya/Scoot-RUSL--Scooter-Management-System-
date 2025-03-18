@@ -8,7 +8,7 @@ With ScootRUSL, students can hire and reserve kick scooters easily using a mobil
 ## Screenshots & Images
 ![ScootRUSL App UI](demo1.jpg)
 ![Real-time Tracking Feature](demo2.jpg)
-![Scooter QR Code Unlock](path/to/screenshot3.png)
+![Scooter QR Code Unlock](Onboarding2.png)
 
 ## Problem Statement
 The long distances between university premises and hostels result in reduced student participation in academic and extracurricular activities. The lack of convenient transport solutions forces students to spend excessive time commuting. 😕

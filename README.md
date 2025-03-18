@@ -7,7 +7,7 @@ With ScootRUSL, students can hire and reserve kick scooters easily using a mobil
 
 ## Screenshots & Images
 ![ScootRUSL App UI](demo1.jpg)
-![Real-time Tracking Feature](path/to/screenshot2.jpg)
+![Real-time Tracking Feature](demo2.jpg)
 ![Scooter QR Code Unlock](path/to/screenshot3.png)
 
 ## Problem Statement

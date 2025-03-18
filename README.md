@@ -64,4 +64,4 @@ ScootRUSL provides a transport facility within the university premises, allowing
 ScootRUSL enhances student mobility within the university, saving time and improving participation in university activities. With its smart features and automation, it offers a seamless and efficient transportation solution for students. 🎓
 
 ---
-GitHub Repository: [Your Repository Link]  
+GitHub Repository: [https://github.com/samaraEdirisooriya/Scoot-RUSL--Scooter-Management-System-.git]  
